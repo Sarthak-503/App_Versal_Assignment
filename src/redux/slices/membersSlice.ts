@@ -1,6 +1,6 @@
 // src/redux/slices/membersSlice.ts
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import { type TeamMember,type Task } from '@/types';
+import type{  TeamMember,Task } from '@/types';
 
 interface MembersState {
   members: TeamMember[];

@@ -1,8 +1,8 @@
 // src/redux/store.ts
 import { configureStore } from '@reduxjs/toolkit';
-import memberReducer from './slice/membersSlice';
+import memberReducer from './slices/membersSlice';
 
-import roleReducer from './slice/roleSlice';
+import roleReducer from './slices/roleSlice';
 export const store = configureStore({
   reducer: {
     members: memberReducer,
