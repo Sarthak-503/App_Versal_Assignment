@@ -4,34 +4,49 @@ import { useAppSelector } from '../hooks/redux';
 import type { DashboardStats } from '../types';
 
 interface StatsCardsProps {
-  stats: DashboardStats;
+  stats?: DashboardStats; // Make it optional
 }
 
 const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
   const { darkMode } = useAppSelector((state) => state.theme);
+  const members = useAppSelector((state) => state.members.members);
+
+  // Provide default stats if not provided
+  const defaultStats: DashboardStats = {
+    totalMembers: members.length,
+    activeTasks: 0,
+    completedTasks: 0,
+    productivityScore: 0,
+    attendance: members.filter(member => member.status !== 'Offline').length * 10,
+    lateComing: Math.floor(members.length * 0.1),
+    absent: members.filter(member => member.status === 'Offline').length,
+    leaveApply: Math.floor(members.length * 0.2),
+  };
+
+  const displayStats = stats || defaultStats;
 
   const cards = [
     {
       title: 'Attendance',
-      value: stats.attendance,
+      value: displayStats.attendance,
       icon: '✅',
       color: 'green',
     },
     {
       title: 'Late Coming',
-      value: stats.lateComing,
+      value: displayStats.lateComing,
       icon: '⏰',
       color: 'yellow',
     },
     {
       title: 'Absent',
-      value: stats.absent,
+      value: displayStats.absent,
       icon: '❌',
       color: 'red',
     },
     {
       title: 'Leave Apply',
-      value: stats.leaveApply,
+      value: displayStats.leaveApply,
       icon: '📝',
       color: 'blue',
     },
