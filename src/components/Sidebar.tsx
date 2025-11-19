@@ -1,6 +1,7 @@
 // src/components/Sidebar.tsx
 import React from 'react';
-import { useAppSelector } from '../hooks/redux';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
+import { toggleTheme } from '../redux/slices/themeSlice';
 
 interface SidebarProps {
   activeSection: string;
@@ -10,7 +11,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ activeSection, onSectionChange }) => {
   const { darkMode } = useAppSelector((state) => state.theme);
   const { currentRole } = useAppSelector((state) => state.role);
-
+  const dispatch = useAppDispatch();
   const leadSections = [
     { id: 'overview', label: 'Dashboard', icon: '📊' },
     { id: 'team', label: 'Team Management', icon: '👥' },
@@ -135,7 +136,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, onSectionChange }) => 
             <span className={`text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
               Dark Mode
             </span>
-            <div className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors ${
+            <div  onClick={() => dispatch(toggleTheme())} className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors ${
               darkMode ? 'bg-blue-600' : 'bg-gray-300'
             }`}>
               <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${

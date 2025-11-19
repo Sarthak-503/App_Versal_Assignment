@@ -41,7 +41,7 @@ const StatusSelector: React.FC = () => {
   );
 };
 
-const getStatusColor = (status: string, isActive: boolean): string => {
+const getStatusColor = (status: string, _isActive: boolean): string => {
   const colors = {
     Working: 'bg-green-500 text-white',
     Break: 'bg-yellow-500 text-white',
