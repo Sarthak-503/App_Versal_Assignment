@@ -17,6 +17,7 @@ const initialState: MembersState = {
       lastActivity: new Date().toISOString(),
       department: "Engineering",
       position: "Frontend Developer",
+      joinDate: "2023-01-15",
     },
     {
       id: "2",
@@ -26,6 +27,7 @@ const initialState: MembersState = {
       lastActivity: new Date().toISOString(),
       department: "Engineering",
       position: "Backend Developer",
+      joinDate: "2022-08-22",
     },
     {
       id: "3",
@@ -35,6 +37,7 @@ const initialState: MembersState = {
       lastActivity: new Date().toISOString(),
       department: "Design",
       position: "UI/UX Designer",
+      joinDate: "2023-03-10",
     },
     {
       id: "4",
@@ -44,6 +47,7 @@ const initialState: MembersState = {
       lastActivity: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
       department: "Product",
       position: "Product Manager",
+      joinDate: "2021-11-05",
     },
     {
       id: "5",
@@ -53,6 +57,7 @@ const initialState: MembersState = {
       lastActivity: new Date().toISOString(),
       department: "Engineering",
       position: "Full Stack Developer",
+      joinDate: "2023-06-18",
     },
   ],
   tasks: [
@@ -141,7 +146,6 @@ const membersSlice = createSlice({
     setMembers: (state, action: PayloadAction<TeamMember[]>) => {
       state.members = action.payload;
     },
-    // New reducer for updating task priority
     updateTaskPriority: (
       state,
       action: PayloadAction<{ taskId: string; priority: Task["priority"] }>
@@ -151,7 +155,6 @@ const membersSlice = createSlice({
         task.priority = action.payload.priority;
       }
     },
-    // New reducer for deleting tasks
     deleteTask: (state, action: PayloadAction<string>) => {
       state.tasks = state.tasks.filter((task) => task.id !== action.payload);
     },

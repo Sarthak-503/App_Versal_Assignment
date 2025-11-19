@@ -8,7 +8,7 @@ export interface TeamMember {
   lastActivity?: string;
   department: string;
   position: string;
-  joinDate: string;
+  joinDate: string; // This property was missing
 }
 
 export interface Task {
