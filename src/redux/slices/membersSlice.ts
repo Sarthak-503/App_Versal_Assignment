@@ -5,6 +5,7 @@ import type { TeamMember, Task } from "@/types";
 interface MembersState {
   members: TeamMember[];
   tasks: Task[];
+  lastActivity: { [memberId: string]: string };
 }
 
 const initialState: MembersState = {
@@ -107,6 +108,7 @@ const initialState: MembersState = {
       priority: "high",
     },
   ],
+  lastActivity: {},
 };
 
 const membersSlice = createSlice({
@@ -123,8 +125,11 @@ const membersSlice = createSlice({
       if (member) {
         member.status = action.payload.status;
         member.lastActivity = new Date().toISOString();
+        // Update the activity tracker
+        state.lastActivity[action.payload.memberId] = new Date().toISOString();
       }
     },
+
     addTask: (state, action: PayloadAction<Omit<Task, "id" | "completed">>) => {
       const newTask: Task = {
         ...action.payload,
@@ -133,6 +138,7 @@ const membersSlice = createSlice({
       };
       state.tasks.push(newTask);
     },
+
     updateTaskProgress: (
       state,
       action: PayloadAction<{ taskId: string; progress: number }>
@@ -141,11 +147,22 @@ const membersSlice = createSlice({
       if (task) {
         task.progress = Math.max(0, Math.min(100, action.payload.progress));
         task.completed = task.progress === 100;
+
+        // Update activity when task progress changes
+        const currentMember = state.members.find(
+          (m) => m.id === task.assignedTo
+        );
+        if (currentMember && currentMember.status !== "Offline") {
+          currentMember.lastActivity = new Date().toISOString();
+          state.lastActivity[task.assignedTo] = new Date().toISOString();
+        }
       }
     },
+
     setMembers: (state, action: PayloadAction<TeamMember[]>) => {
       state.members = action.payload;
     },
+
     updateTaskPriority: (
       state,
       action: PayloadAction<{ taskId: string; priority: Task["priority"] }>
@@ -155,18 +172,57 @@ const membersSlice = createSlice({
         task.priority = action.payload.priority;
       }
     },
+
     deleteTask: (state, action: PayloadAction<string>) => {
       state.tasks = state.tasks.filter((task) => task.id !== action.payload);
+    },
+
+    // New reducer to reset status due to inactivity
+    resetInactiveMembers: (state) => {
+      const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+
+      state.members.forEach((member) => {
+        // Use the lastActivity from the activity tracker or fallback to member's lastActivity
+        const lastActivity =
+          state.lastActivity[member.id] || member.lastActivity;
+
+        // Only reset if member is not already offline, has lastActivity data, and has been inactive for 10+ minutes
+        if (
+          member.status !== "Offline" &&
+          lastActivity &&
+          lastActivity < tenMinutesAgo
+        ) {
+          member.status = "Offline";
+          // Also update the member's lastActivity to reflect when they were auto-reset
+          member.lastActivity = new Date().toISOString();
+        }
+      });
+    },
+
+    // New reducer to update activity timestamp
+    updateMemberActivity: (
+      state,
+      action: PayloadAction<{ memberId: string }>
+    ) => {
+      const member = state.members.find(
+        (m) => m.id === action.payload.memberId
+      );
+      if (member && member.status !== "Offline") {
+        member.lastActivity = new Date().toISOString();
+        state.lastActivity[action.payload.memberId] = new Date().toISOString();
+      }
     },
   },
 });
 
-export const { 
-  updateMemberStatus, 
-  addTask, 
-  updateTaskProgress, 
+export const {
+  updateMemberStatus,
+  addTask,
+  updateTaskProgress,
   setMembers,
   updateTaskPriority,
-  deleteTask
+  deleteTask,
+  resetInactiveMembers,
+  updateMemberActivity,
 } = membersSlice.actions;
 export default membersSlice.reducer;

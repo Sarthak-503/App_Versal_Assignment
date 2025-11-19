@@ -5,7 +5,7 @@ export interface TeamMember {
   email: string;
   status: 'Working' | 'Break' | 'Meeting' | 'Offline';
   avatar?: string;
-  lastActivity?: string;
+  lastActivity: string;
   department: string;
   position: string;
   joinDate: string; // This property was missing

@@ -2,6 +2,7 @@
 import React from 'react';
 import { useAppSelector, useAppDispatch } from '../hooks/redux';
 import { updateTaskProgress, deleteTask } from '../redux/slices/membersSlice';
+import { useAutoResetStatus } from '../hooks/useAutoResetStatus';
 import type { Task } from '../types';
 
 interface TaskListProps {
@@ -18,12 +19,14 @@ const TaskList: React.FC<TaskListProps> = ({
   const dispatch = useAppDispatch();
   const { darkMode } = useAppSelector((state) => state.theme);
   const members = useAppSelector((state) => state.members.members);
+  const { updateActivity } = useAutoResetStatus(); // Add this hook
 
   const handleProgressChange = (taskId: string, change: number) => {
     const task = tasks.find(t => t.id === taskId);
     if (task) {
       const newProgress = Math.max(0, Math.min(100, task.progress + change));
       dispatch(updateTaskProgress({ taskId, progress: newProgress }));
+      updateActivity(); // Track activity when task progress changes
     }
   };
 
