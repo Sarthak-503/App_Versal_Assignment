@@ -4,7 +4,6 @@ import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import Header from './components/Header';
 import Dashboard from './pages/Dashboard';
-import './App.css';
 
 const App: React.FC = () => {
   return (
